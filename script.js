@@ -53,33 +53,36 @@ function playRound(playerSelection, computerSelection){
     }
 }
 
-// function game(){
-//     let round = 1;
-//     while(round <= 5){
-//         const computerSelection = computerPlay();
-//         const playerSelection = prompt("Rock, Paper, or Scissors?").toLowerCase();
-//         const result = playRound(playerSelection, computerSelection);
-//         alert(result);
-//         round++;
-//     }
-//     if(round > 5){
-//         alert(`Game over!
-//         Final score:
-//         You ${playerScore} - Computer ${computerScore}`);
-        
-//         const playAgain = prompt("Would you like to play again? (y/n)").toLowerCase();
-//         if(playAgain == "y"){
-//             playerScore = 0;
-//             computerScore = 0;
-//             round = 1;
-//             game();
-//         }
-//     }
-// }
-
 function initUI(){
+    const header = document.createElement("div");
+    header.id = "header";
+    const headerText = document.createElement("h1");
+    headerText.innerHTML = "Rock, Paper, Scissors";
+    header.appendChild(headerText);
+    document.body.appendChild(header);
+
+    const main = document.createElement("main");
+    document.body.appendChild(main);
+
+    initButtons();
+
+    const footer = document.createElement("div");
+    footer.id = "footer";
+    const footerText = document.createElement("p");
+    footerText.innerHTML = "<a href='#'>tupudipi</a>";
+    footer.appendChild(footerText);
+    document.body.appendChild(footer);
+
+}
+
+function initButtons(){
+    const main = document.querySelector("main");
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.id = "buttonsContainer";
+    main.appendChild(buttonsContainer);
+
     const rock = document.createElement("button");
-    rock.innerHTML = "Rock";
+    rock.innerHTML = "✊";
     rock.setAttribute("id", "rock");
     rock.addEventListener("click", function(){
         const computerSelection = computerPlay();
@@ -87,10 +90,10 @@ function initUI(){
         updateScore();
         roundResultText.innerHTML = result;
     });
-    document.body.appendChild(rock);
+    buttonsContainer.appendChild(rock);
 
     const paper = document.createElement("button");
-    paper.innerHTML = "Paper";
+    paper.innerHTML = "✋";
     paper.setAttribute("id", "paper");
     paper.addEventListener("click", function(){
         const computerSelection = computerPlay();
@@ -98,10 +101,10 @@ function initUI(){
         updateScore();
         roundResultText.innerHTML = result;
     });
-    document.body.appendChild(paper);
+    buttonsContainer.appendChild(paper);
 
     const scissors = document.createElement("button");
-    scissors.innerHTML = "Scissors";
+    scissors.innerHTML = "✌";
     scissors.setAttribute("id", "scissors");
     scissors.addEventListener("click", function(){
         const computerSelection = computerPlay();
@@ -109,24 +112,77 @@ function initUI(){
         updateScore();
         roundResultText.innerHTML = result;
     });
-    document.body.appendChild(scissors);
+    buttonsContainer.appendChild(scissors);
 
+    const roundTextContainer = document.createElement("div");
+    roundTextContainer.id = "roundTextContainer";
+    main.appendChild(roundTextContainer);
     const roundResultText = document.createElement("p");
     roundResultText.innerHTML = "";
-    document.body.appendChild(roundResultText);
+    roundTextContainer.appendChild(roundResultText);
 
     const score = document.createElement("p");
     score.id = "score";
     score.innerHTML = `Current score:
     You ${playerScore} - Computer ${computerScore}`;
-    document.body.appendChild(score);
+    roundTextContainer.appendChild(score);
 }
 
 function updateScore(){
     const score = document.querySelector("#score");
-    score.innerHTML = `Current score:
-    You ${playerScore} - Computer ${computerScore}`;
+
+    if(playerScore == 5){
+        let winner = "player";
+        disableButtons();
+        askRestartPopup(winner);
+    }
+    else if(computerScore == 5){
+        let winner = "computer";
+        disableButtons();
+        askRestartPopup(winner);
+    }
+    else {
+        score.innerHTML = `Current score:
+        You ${playerScore} - Computer ${computerScore}`;
+    }
 }
+
+function disableButtons(){
+    const buttons = document.querySelectorAll("button");
+    buttons.forEach(function(button){
+        button.disabled = true;
+    });
+}
+
+function askRestartPopup(winner){
+    let winnerText = "";
+    if(winner == "player"){
+        winnerText = `You win! Final score:
+        You ${playerScore} - Computer ${computerScore}`;
+    }
+    else{
+        winnerText = `You lose!. Final score:
+        You ${playerScore} - Computer ${computerScore}`;
+    }
+
+    const popup = document.createElement("div");
+    popup.id = "popup";
+    const popupText = document.createElement("p");
+    popupText.innerHTML = winnerText;
+    popup.appendChild(popupText);
+    const restart = document.createElement("button");
+    restart.innerHTML = "Restart";
+    restart.addEventListener("click", function(){
+        // restart game
+        playerScore = 0;
+        computerScore = 0;
+        document.body.innerHTML = "";
+        initUI();
+    });
+    popup.appendChild(restart);
+    document.body.appendChild(popup);
+}
+
 
 let playerScore = 0;
 let computerScore = 0;
